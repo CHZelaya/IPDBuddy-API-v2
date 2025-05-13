@@ -20,7 +20,8 @@ public class FirebaseConfig {
 
     private static final Logger log = LoggerFactory.getLogger(FirebaseConfig.class);
 
-    @Value("classpath:firebase-service-account.json")
+    @Value("${FIREBASE_SERVICE_ACCOUNT:?FIREBASE_SERVICE_ACCOUNT not configured}")
+    //@Value("classpath:firebase-service-account.json")
     private Resource privateKey;
 
     @Bean
