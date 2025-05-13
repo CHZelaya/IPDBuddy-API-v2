@@ -12,6 +12,8 @@ import org.springframework.core.io.Resource;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Base64;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,27 +22,26 @@ public class FirebaseConfig {
 
     private static final Logger log = LoggerFactory.getLogger(FirebaseConfig.class);
 
-//    @Value("${FIREBASE_SERVICE_ACCOUNT:?FIREBASE_SERVICE_ACCOUNT not configured}")
-//    //@Value("classpath:firebase-service-account.json")
-//    private Resource privateKey;
+
+    //@Value("classpath:firebase-service-account.json")
+    @Value("${FIREBASE_SERVICE_ACCOUNT_BASE64}")
+    private String serviceAccountBase64;
 
     // ✅ Read from Environment Variable
-    String serviceAccountJson = System.getenv("FIREBASE_SERVICE_ACCOUNT");
+    //String serviceAccountJson = System.getenv("FIREBASE_SERVICE_ACCOUNT");
 
     @Bean
     public FirebaseApp firebaseApp() throws IOException {
         log.info("Initializing FirebaseApp...");
+        byte[] decodedBytes = Base64.getDecoder().decode(serviceAccountBase64);
 
         //? Grabbing the credentials from the json file.
-        try (InputStream credentials = new ByteArrayInputStream(serviceAccountJson.getBytes());) {
-
-            FirebaseOptions firebaseOptions = FirebaseOptions.builder()
-                    .setCredentials(GoogleCredentials.fromStream(credentials))
+        try (ByteArrayInputStream credentialsStream = new ByteArrayInputStream(decodedBytes)) {
+            FirebaseOptions options = FirebaseOptions.builder()
+                    .setCredentials(GoogleCredentials.fromStream(credentialsStream))
                     .setProjectId("ipd-buddy")
                     .build();
-            log.info("Firebase initialized successfully with project ID: {}", firebaseOptions.getProjectId());
-            return FirebaseApp.initializeApp(firebaseOptions);
-
+            return FirebaseApp.initializeApp(options);
         } catch (IOException e) {
             log.error("Failed to initialize Firebase App", e);
             throw e;
