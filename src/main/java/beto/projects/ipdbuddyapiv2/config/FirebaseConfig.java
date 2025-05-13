@@ -20,16 +20,19 @@ public class FirebaseConfig {
 
     private static final Logger log = LoggerFactory.getLogger(FirebaseConfig.class);
 
-    @Value("${FIREBASE_SERVICE_ACCOUNT:?FIREBASE_SERVICE_ACCOUNT not configured}")
-    //@Value("classpath:firebase-service-account.json")
-    private Resource privateKey;
+//    @Value("${FIREBASE_SERVICE_ACCOUNT:?FIREBASE_SERVICE_ACCOUNT not configured}")
+//    //@Value("classpath:firebase-service-account.json")
+//    private Resource privateKey;
+
+    // ✅ Read from Environment Variable
+    String serviceAccountJson = System.getenv("FIREBASE_SERVICE_ACCOUNT");
 
     @Bean
     public FirebaseApp firebaseApp() throws IOException {
         log.info("Initializing FirebaseApp...");
 
         //? Grabbing the credentials from the json file.
-        try (InputStream credentials = new ByteArrayInputStream(privateKey.getContentAsByteArray());) {
+        try (InputStream credentials = new ByteArrayInputStream(serviceAccountJson.getBytes());) {
 
             FirebaseOptions firebaseOptions = FirebaseOptions.builder()
                     .setCredentials(GoogleCredentials.fromStream(credentials))
