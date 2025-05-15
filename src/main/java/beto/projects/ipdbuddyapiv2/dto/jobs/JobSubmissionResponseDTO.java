@@ -1,12 +1,14 @@
 package beto.projects.ipdbuddyapiv2.dto.jobs;
 
 import beto.projects.ipdbuddyapiv2.dto.billables.BillableItemSummaryDTO;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 @Builder
+@AllArgsConstructor
 public class JobSubmissionResponseDTO {
 
     private Long jobId;

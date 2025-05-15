@@ -3,6 +3,7 @@ package beto.projects.ipdbuddyapiv2.entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +30,18 @@ public class Job {
 
     @OneToMany(mappedBy = "job")
     private List<BillableItem> billableItems = new ArrayList<>();
+
+    @NotNull
+    private BigDecimal grandTotalAmount;
+
+    @NotNull
+    private BigDecimal taxAmount;
+
+    @NotNull
+    private BigDecimal savingsAmount;
+
+    @Lob
+    private String notes;
 
     public Job() {
     }
@@ -69,6 +82,38 @@ public class Job {
         this.billableItems = billableItems;
     }
 
+    public BigDecimal getGrandTotalAmount() {
+        return grandTotalAmount;
+    }
+
+    public BigDecimal getTaxAmount() {
+        return taxAmount;
+    }
+
+    public BigDecimal getSavingsAmount() {
+        return savingsAmount;
+    }
+
+    public void setGrandTotalAmount(BigDecimal grandTotalAmount) {
+        this.grandTotalAmount = grandTotalAmount;
+    }
+
+    public void setTaxAmount(BigDecimal taxAmount) {
+        this.taxAmount = taxAmount;
+    }
+
+    public void setSavingsAmount(BigDecimal savingsAmount) {
+        this.savingsAmount = savingsAmount;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
     @Override
     public String toString() {
         return "Job{" +
@@ -77,6 +122,10 @@ public class Job {
                 ", address='" + address + '\'' +
                 ", contractor=" + contractor +
                 ", billableItems=" + billableItems +
+                ", grandTotalAmount=" + grandTotalAmount +
+                ", taxAmount=" + taxAmount +
+                ", savingsAmount=" + savingsAmount +
+                ", notes='" + notes + '\'' +
                 '}';
     }
 }

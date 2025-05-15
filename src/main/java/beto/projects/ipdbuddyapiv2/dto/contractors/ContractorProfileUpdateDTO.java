@@ -2,11 +2,13 @@ package beto.projects.ipdbuddyapiv2.dto.contractors;
 
 
 import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 
 import java.math.BigDecimal;
 
 @Builder
+@AllArgsConstructor
 public class ContractorProfileUpdateDTO {
 
 

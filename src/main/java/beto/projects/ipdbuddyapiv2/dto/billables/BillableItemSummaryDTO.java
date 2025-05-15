@@ -1,13 +1,16 @@
 package beto.projects.ipdbuddyapiv2.dto.billables;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Builder
+@AllArgsConstructor
 public class BillableItemSummaryDTO {
 
+    private String name;
     private String type;
     private String description;
     private int quantity;
@@ -17,6 +20,10 @@ public class BillableItemSummaryDTO {
     private LocalDate jobDate;
 
     public BillableItemSummaryDTO() {
+    }
+
+    public String getName() {
+        return name;
     }
 
     public String getType() {

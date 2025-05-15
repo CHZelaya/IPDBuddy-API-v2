@@ -3,11 +3,13 @@ package beto.projects.ipdbuddyapiv2.dto.contractors;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 
 import java.math.BigDecimal;
 
 @Builder
+@AllArgsConstructor
 public class ContractorProfileDTO {
 
     @NotNull
@@ -26,9 +28,9 @@ public class ContractorProfileDTO {
     @Pattern(regexp = "^(\\+1[-.\\s]?)?(\\(?\\d{3}\\)?[-.\\s]?)\\d{3}[-.\\s]?\\d{4}$\n" )
     private String phoneNumber;
 
-    private BigDecimal taxRate;
+    private BigDecimal taxRate = BigDecimal.valueOf(00.10);
 
-    private BigDecimal savingsRate;
+    private BigDecimal savingsRate = BigDecimal.valueOf(00.10);
 
     public ContractorProfileDTO() {
     }

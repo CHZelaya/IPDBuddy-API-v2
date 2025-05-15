@@ -1,10 +1,12 @@
 package beto.projects.ipdbuddyapiv2.dto.contractors;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 
 import java.math.BigDecimal;
 
 @Builder
+@AllArgsConstructor
 public class ContractorProfileResponseDTO {
 
     private String firstName;

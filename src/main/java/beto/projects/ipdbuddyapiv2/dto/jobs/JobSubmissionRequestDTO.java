@@ -1,12 +1,14 @@
 package beto.projects.ipdbuddyapiv2.dto.jobs;
 
 import beto.projects.ipdbuddyapiv2.dto.billables.BillableItemsRequestDTO;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Builder
+@AllArgsConstructor
 public class JobSubmissionRequestDTO {
 
     private LocalDate date;

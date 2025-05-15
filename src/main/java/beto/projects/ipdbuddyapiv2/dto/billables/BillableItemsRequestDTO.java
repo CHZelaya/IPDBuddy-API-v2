@@ -1,8 +1,10 @@
 package beto.projects.ipdbuddyapiv2.dto.billables;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 
 @Builder
+@AllArgsConstructor
 public class BillableItemsRequestDTO {
 
     private String billableType;
