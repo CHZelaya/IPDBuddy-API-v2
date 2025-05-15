@@ -31,6 +31,7 @@ public class ContractorService {
         return ContractorProfileResponseDTO.builder()
                 .firstName(contractor.getFirstName())
                 .lastName(contractor.getLastName())
+                .email(contractor.getEmail())
                 .phoneNumber(contractor.getPhoneNumber())
                 .savingsRate(contractor.getSavingsRate())
                 .taxRate(contractor.getTaxRate())

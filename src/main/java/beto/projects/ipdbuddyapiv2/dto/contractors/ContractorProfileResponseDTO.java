@@ -11,11 +11,16 @@ public class ContractorProfileResponseDTO {
 
     private String firstName;
     private String lastName;
+    private String email;
     private String phoneNumber;
     private BigDecimal taxRate;
     private BigDecimal savingsRate;
 
     public ContractorProfileResponseDTO() {
+    }
+
+    public String getEmail() {
+        return email;
     }
 
     public String getFirstName() {
@@ -43,6 +48,7 @@ public class ContractorProfileResponseDTO {
         return "ContractorProfileResponseDTO{" +
                 "firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", taxRate=" + taxRate +
                 ", savingsRate=" + savingsRate +
