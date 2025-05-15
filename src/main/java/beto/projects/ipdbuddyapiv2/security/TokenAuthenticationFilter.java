@@ -56,7 +56,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             //! Logger
             log.debug("Received Bearer token: {}", token);
 
-            Optional<String> userId = extractUserIdFromToken(token);
+            Optional<FirebaseToken> userId = extractUserIdFromToken(token);
 
             if (userId.isPresent()) {
 
@@ -87,15 +87,14 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
 
 
-    private Optional<String> extractUserIdFromToken(String token) {
+    private Optional<FirebaseToken> extractUserIdFromToken(String token) {
         try {
             FirebaseToken firebaseToken = firebaseAuth.verifyIdToken(token, true);
-            String userId= firebaseToken.getUid();
             //String userId = String.valueOf(firebaseToken.getClaims().get(USER_ID_CLAIM));
             //! Logger
-            log.debug("Extracted user_id claim: {}", userId);
+            log.debug("Extracted user_id claim: {}", firebaseToken.getUid());
 
-            return Optional.of(userId);
+            return Optional.of(firebaseToken);
         } catch (FirebaseAuthException exception) {
             //! Logger
             log.error("FirebaseAuthException while verifying token: {}", exception.getMessage());
