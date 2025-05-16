@@ -5,6 +5,7 @@ import beto.projects.ipdbuddyapiv2.dto.jobs.JobSubmissionRequestDTO;
 import beto.projects.ipdbuddyapiv2.dto.jobs.JobSubmissionResponseDTO;
 import beto.projects.ipdbuddyapiv2.services.JobService;
 import com.google.firebase.auth.FirebaseToken;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +15,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -31,16 +34,51 @@ public class JobController {
     }
 
 
+//    @PostMapping("/submit")
+//    public ResponseEntity<JobSubmissionResponseDTO> submitJob(
+//            Authentication authentication,
+//            @RequestBody @Valid JobSubmissionRequestDTO requestDTO) {
+//
+//        //! Debugging
+//        log.info("Received Job Payload: {}", requestDTO);
+//
+//
+//        if (!(authentication.getPrincipal() instanceof FirebaseToken firebaseToken)) {
+//            log.warn("Principal is not a FirebaseToken. Rejecting request.");
+//            return ResponseEntity.status(403).build();
+//        }
+//
+//        String email = firebaseToken.getEmail();
+//
+//        try {
+//        JobSubmissionResponseDTO responseDTO = jobService.handleJobSubmission(email, requestDTO);
+//
+//        URI location = ServletUriComponentsBuilder
+//                .fromCurrentRequest()
+//                .path("/{jobId}")
+//                .buildAndExpand(responseDTO.getJobId())
+//                .toUri();
+//
+//            log.info("Returning Job Response: {}", responseDTO);
+//
+//            return ResponseEntity.created(location).body(responseDTO);
+//
+//        } catch (Exception e) {
+//            log.error("Exception while handling job submission: {}", e.getMessage());
+//
+//            JobSubmissionRequestDTO fallbackResponse = JobSubmissionRequestDTO.builder()
+//                    .billables
+//                    .build();
+//            return ResponseEntity.status(500).body(null);
+//        }
+//    }
+
     @PostMapping("/submit")
     public ResponseEntity<JobSubmissionResponseDTO> submitJob(
             Authentication authentication,
             @RequestBody @Valid JobSubmissionRequestDTO requestDTO) {
 
-        //! Debugging
-//      log.info("Authentication Principal Type: {}", authentication.getPrincipal().getClass().getName());
-//      log.info("Authentication Principal: {}", authentication.getPrincipal());
         log.info("Received Job Payload: {}", requestDTO);
-
 
         if (!(authentication.getPrincipal() instanceof FirebaseToken firebaseToken)) {
             log.warn("Principal is not a FirebaseToken. Rejecting request.");
@@ -49,24 +87,30 @@ public class JobController {
 
         String email = firebaseToken.getEmail();
 
+        // 🟢 Pre-calculate totals WITHOUT contractor dependency first
+        JobSubmissionResponseDTO preCalculatedResponse = jobService.preCalculateJobSubmissionWithoutContractor(requestDTO);
+
         try {
-        JobSubmissionResponseDTO responseDTO = jobService.handleJobSubmission(email, requestDTO);
+            // ✅ Now _attempt_ to fetch contractor and persist if available
+            jobService.attemptToPersistCalculatedJob(email, preCalculatedResponse);
+            return ResponseEntity.ok(preCalculatedResponse);
 
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path("/{jobId}")
-                .buildAndExpand(responseDTO.getJobId())
-                .toUri();
+        } catch (EntityNotFoundException e) {
+            log.error("Contractor not found for email {}: {}", email, e.getMessage());
 
-            log.info("Returning Job Response: {}", responseDTO);
+            // 🟡 Return _calculated totals without tax/savings_
+            return ResponseEntity.status(500).body(preCalculatedResponse);
 
-            return ResponseEntity.created(location).body(responseDTO);
+        } catch (Exception persistenceException) {
+            log.error("Persistence failed: {}", persistenceException.getMessage(), persistenceException);
 
-        } catch (Exception e) {
-            log.error("Exception while handling job submission: {}", e.getMessage());
-            return ResponseEntity.status(500).body(null);
+            // 🟡 Return _calculated totals even if persistence fails_
+            return ResponseEntity.status(500).body(preCalculatedResponse);
         }
     }
+
+
+
 
 
     @GetMapping("/jobs")
