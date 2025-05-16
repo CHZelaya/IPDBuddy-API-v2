@@ -52,19 +52,20 @@ public class JobService {
         job.setContractor(contractor);
         job.setAddress(requestDTO.getAddress());
         job.setDate(requestDTO.getDate() != null ? requestDTO.getDate() : LocalDate.now());
+        job = jobRepo.save(job); // Saving early to generate a job with an ID
 
 
 
         //Preparing the summary
         List<BillableItemSummaryDTO> itemsSummaryList = new ArrayList<>();
         BigDecimal grandTotal = BigDecimal.ZERO;
-
         List<BillableItemsRequestDTO> itemsRequests = requestDTO.getBillables();
+
+        List<BillableItem> billableItemsToSave = new ArrayList<>();
 
         if (itemsRequests != null && !itemsRequests.isEmpty()) {
             for (BillableItemsRequestDTO itemsRequest : requestDTO.getBillables()) {
                 Billables billablesType = Billables.valueOf(itemsRequest.getBillableType());
-
                 //* Calculate quantity * rate for each task done
                 BigDecimal rate = billablesType.getRate();
                 BigDecimal quantity = BigDecimal.valueOf(itemsRequest.getQuantity());
@@ -81,8 +82,10 @@ public class JobService {
                 submission.setQuantity(itemsRequest.getQuantity());
                 submission.setTotalPrice(total);
 
-                billableItemRepo.save(submission);
+                // Adding to list, not saving yet
+                billableItemsToSave.add(submission);
 
+                // Building response summary
                 itemsSummaryList.add(
                         BillableItemSummaryDTO.builder()
                                 .name(billablesType.name())
@@ -97,21 +100,24 @@ public class JobService {
 
                 grandTotal = grandTotal.add(total);
             }
+            //! This is what I was missing, batch saving all billables AFTER the loop.
+            billableItemRepo.saveAll(billableItemsToSave);
+
         }
+
+        job.setGrandTotalAmount(grandTotal);
+        job.setTaxAmount(grandTotal.multiply(contractor.getTaxRate()));
+        job.setSavingsAmount(grandTotal.multiply(contractor.getSavingsRate()));
+        jobRepo.save(job);
 
         JobSubmissionResponseDTO response = JobSubmissionResponseDTO.builder()
                 .jobId(job.getId())
                 .billableItemsSummary(itemsSummaryList)
-                .grandTotalAmount(grandTotal)
-                .taxAmount(grandTotal.multiply(contractor.getTaxRate()))
-                .savingsAmount(grandTotal.multiply(contractor.getSavingsRate()))
+                .grandTotalAmount(job.getGrandTotalAmount())
+                .taxAmount(job.getTaxAmount())
+                .savingsAmount(job.getSavingsAmount())
                 .build();
 
-
-        job.setGrandTotalAmount(grandTotal);
-        job.setTaxAmount(grandTotal.multiply(contractor.getTaxRate()));
-        job.setSavingsAmount(grandTotal.multiply(contractor.getTaxRate()));
-        jobRepo.save(job);
         return response;
     }
 
