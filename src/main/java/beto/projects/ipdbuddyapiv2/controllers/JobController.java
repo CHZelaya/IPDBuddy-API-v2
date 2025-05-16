@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.util.List;
@@ -18,6 +20,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/job")
 public class JobController {
+
+    private static final Logger log = LoggerFactory.getLogger(JobController.class);
 
     private final JobService jobService;
 
@@ -31,7 +35,15 @@ public class JobController {
             Authentication authentication,
             @RequestBody @Valid JobSubmissionRequestDTO requestDTO) {
 
-        FirebaseToken firebaseToken = (FirebaseToken) authentication.getPrincipal();
+        //! Debugging
+        log.info("Authentication Principal Type: {}", authentication.getPrincipal().getClass().getName());
+        log.info("Authentication Principal: {}", authentication.getPrincipal());
+
+        if (!(authentication.getPrincipal() instanceof FirebaseToken firebaseToken)) {
+            log.warn("Principal is not a FirebaseToken. Rejecting request.");
+            return ResponseEntity.status(403).build();
+        }
+
         String email = firebaseToken.getEmail();
 
         JobSubmissionResponseDTO responseDTO = jobService.handleJobSubmission(email, requestDTO);
