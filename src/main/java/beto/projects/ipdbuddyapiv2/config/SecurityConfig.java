@@ -14,7 +14,15 @@ import org.springframework.web.cors.CorsConfigurationSource;
 @Configuration
 public class SecurityConfig {
 
-    private static final String[] WHITELISTED_API_ENDPOINTS = { "/user", "/user/login", "/user/refresh-token" };
+    private static final String[] WHITELISTED_PUBLIC_API_ENDPOINTS = { "/user", "/user/login", "/user/refresh-token" };
+
+    private static final String[] WHITELISTED_AUTHENTICATED_API_ENDPOINTS = {
+            "/api/v1/contractor/me",
+            "/api/v1/job/submit",
+            "/api/v1/job/jobs",
+    // Future:
+    // "/api/v1/job/jobs/*"
+    };
 
     private final TokenAuthenticationFilter tokenAuthenticationFilter;
 
@@ -23,7 +31,7 @@ public class SecurityConfig {
         this.tokenAuthenticationFilter = tokenAuthenticationFilter;
     }
 
-    // ✅ Add this to prevent fallback to default in-memory auth
+    //  Add this to prevent fallback to default in-memory auth
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
@@ -34,11 +42,16 @@ public class SecurityConfig {
     public SecurityFilterChain configure(HttpSecurity http, CorsConfigurationSource corsConfigurationSource) throws Exception {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
+
                 .authorizeHttpRequests(authManager -> {
-                    authManager.requestMatchers(HttpMethod.POST, WHITELISTED_API_ENDPOINTS)
-                            .permitAll()
-                            .anyRequest()
-                            .authenticated();
+
+                    authManager.requestMatchers(HttpMethod.POST, WHITELISTED_PUBLIC_API_ENDPOINTS).permitAll();
+
+                    authManager.requestMatchers(WHITELISTED_AUTHENTICATED_API_ENDPOINTS).authenticated();
+
+                    // Default to requiring authentication for everything else
+                    authManager.anyRequest().authenticated();
+
                 })
                 .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
