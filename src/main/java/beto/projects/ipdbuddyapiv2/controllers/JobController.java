@@ -37,8 +37,10 @@ public class JobController {
             @RequestBody @Valid JobSubmissionRequestDTO requestDTO) {
 
         //! Debugging
-        log.info("Authentication Principal Type: {}", authentication.getPrincipal().getClass().getName());
-        log.info("Authentication Principal: {}", authentication.getPrincipal());
+//      log.info("Authentication Principal Type: {}", authentication.getPrincipal().getClass().getName());
+//      log.info("Authentication Principal: {}", authentication.getPrincipal());
+        log.info("Received Job Payload: {}", requestDTO);
+
 
         if (!(authentication.getPrincipal() instanceof FirebaseToken firebaseToken)) {
             log.warn("Principal is not a FirebaseToken. Rejecting request.");
@@ -56,7 +58,9 @@ public class JobController {
                 .buildAndExpand(responseDTO.getJobId())
                 .toUri();
 
-        return ResponseEntity.created(location).body(responseDTO);
+            log.info("Returning Job Response: {}", responseDTO);
+
+            return ResponseEntity.created(location).body(responseDTO);
 
         } catch (Exception e) {
             log.error("Exception while handling job submission: {}", e.getMessage());
