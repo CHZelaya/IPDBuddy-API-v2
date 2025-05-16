@@ -6,6 +6,7 @@ import beto.projects.ipdbuddyapiv2.dto.jobs.JobSubmissionResponseDTO;
 import beto.projects.ipdbuddyapiv2.services.JobService;
 import com.google.firebase.auth.FirebaseToken;
 import jakarta.validation.Valid;
+import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -46,6 +47,9 @@ public class JobController {
 
         String email = firebaseToken.getEmail();
 
+        try {
+
+
         JobSubmissionResponseDTO responseDTO = jobService.handleJobSubmission(email, requestDTO);
 
         URI location = ServletUriComponentsBuilder
@@ -55,6 +59,10 @@ public class JobController {
                 .toUri();
 
         return ResponseEntity.created(location).body(responseDTO);
+        } catch (Exception e) {
+            log.error("Exception while handling job submission: {}", e.getMessage());
+            return ResponseEntity.status(500).body(null);
+        }
     }
 
 
