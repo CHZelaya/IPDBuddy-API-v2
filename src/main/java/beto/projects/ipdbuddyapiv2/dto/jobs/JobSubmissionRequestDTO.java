@@ -26,7 +26,7 @@ public class JobSubmissionRequestDTO {
         return address;
     }
 
-    public List<BillableItemsRequestDTO> getItemsRequests() {
+    public List<BillableItemsRequestDTO> getBillables() {
         return billables;
     }
 

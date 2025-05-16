@@ -59,10 +59,10 @@ public class JobService {
         List<BillableItemSummaryDTO> itemsSummaryList = new ArrayList<>();
         BigDecimal grandTotal = BigDecimal.ZERO;
 
-        List<BillableItemsRequestDTO> itemsRequests = requestDTO.getItemsRequests();
+        List<BillableItemsRequestDTO> itemsRequests = requestDTO.getBillables();
 
         if (itemsRequests != null && !itemsRequests.isEmpty()) {
-            for (BillableItemsRequestDTO itemsRequest : requestDTO.getItemsRequests()) {
+            for (BillableItemsRequestDTO itemsRequest : requestDTO.getBillables()) {
                 Billables billablesType = Billables.valueOf(itemsRequest.getBillableType());
 
                 //* Calculate quantity * rate for each task done
