@@ -13,7 +13,7 @@ public class JobSubmissionRequestDTO {
 
     private LocalDate date;
     private String address;
-    private List<BillableItemsRequestDTO> itemsRequests;
+    private List<BillableItemsRequestDTO> billables;
 
     public JobSubmissionRequestDTO() {
     }
@@ -27,7 +27,7 @@ public class JobSubmissionRequestDTO {
     }
 
     public List<BillableItemsRequestDTO> getItemsRequests() {
-        return itemsRequests;
+        return billables;
     }
 
     @Override
@@ -35,7 +35,7 @@ public class JobSubmissionRequestDTO {
         return "JobSubmissionRequestDTO{" +
                 "date=" + date +
                 ", address='" + address + '\'' +
-                ", itemsRequests=" + itemsRequests +
+                ", itemsRequests=" + billables +
                 '}';
     }
 }
