@@ -52,6 +52,11 @@ public class JobService {
         job.setContractor(contractor);
         job.setAddress(requestDTO.getAddress());
         job.setDate(requestDTO.getDate() != null ? requestDTO.getDate() : LocalDate.now());
+
+        job.setGrandTotalAmount(BigDecimal.ZERO);
+        job.setSavingsAmount(BigDecimal.ZERO);
+        job.setTaxAmount(BigDecimal.ZERO);
+
         job = jobRepo.save(job); // Saving early to generate a job with an ID
 
 
