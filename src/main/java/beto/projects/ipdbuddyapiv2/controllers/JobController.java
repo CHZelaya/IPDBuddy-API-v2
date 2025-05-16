@@ -48,8 +48,6 @@ public class JobController {
         String email = firebaseToken.getEmail();
 
         try {
-
-
         JobSubmissionResponseDTO responseDTO = jobService.handleJobSubmission(email, requestDTO);
 
         URI location = ServletUriComponentsBuilder
@@ -59,6 +57,7 @@ public class JobController {
                 .toUri();
 
         return ResponseEntity.created(location).body(responseDTO);
+
         } catch (Exception e) {
             log.error("Exception while handling job submission: {}", e.getMessage());
             return ResponseEntity.status(500).body(null);
