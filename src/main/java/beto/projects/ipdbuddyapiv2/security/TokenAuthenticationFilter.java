@@ -46,6 +46,8 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
         String authorizationHeader = request.getHeader(AUTHORIZATION_HEADER);
         log.info("Authorization Header Received: '{}'", authorizationHeader);
+        log.info("Incoming Request: [{} {}]", request.getMethod(), request.getRequestURI());
+
 
         if (authorizationHeader != null && authorizationHeader.startsWith(BEARER_PREFIX)) {
             String token = authorizationHeader.replace(BEARER_PREFIX, "").trim();
