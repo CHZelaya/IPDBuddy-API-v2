@@ -47,60 +47,62 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         String authorizationHeader = request.getHeader(AUTHORIZATION_HEADER);
         log.info("Authorization Header Received: '{}'", authorizationHeader);
 
-
         if (authorizationHeader != null && authorizationHeader.startsWith(BEARER_PREFIX)) {
             String token = authorizationHeader.replace(BEARER_PREFIX, "").trim();
             JwtDebugger.debugToken(token);
 
-
-            //! Logger
             log.debug("Received Bearer token: {}", token);
 
-            Optional<FirebaseToken> userId = extractUserIdFromToken(token);
+            Optional<FirebaseToken> firebaseTokenOpt = extractFirebaseTokenFromToken(token);
 
-            if (userId.isPresent()) {
+            if (firebaseTokenOpt.isPresent()) {
+                FirebaseToken firebaseToken = firebaseTokenOpt.get();
 
-                //! Logger
-                log.info("Token validated successfully. User ID: {}", userId.get());
+                log.info("Token validated successfully. User ID: {}", firebaseToken.getUid());
 
-                var authentication = new UsernamePasswordAuthenticationToken(userId.get(), null, null);
+                var authentication = new UsernamePasswordAuthenticationToken(firebaseToken, null, null);
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             } else {
-                log.info("Authorization Header Received: '{}'", authorizationHeader);
-                //! Logger
                 log.warn("Failed to validate token: {}", token);
                 setAuthErrorDetails(response);
                 return;
             }
         } else {
-            // ! Logger
             log.debug("No Bearer token found in Authorization header");
         }
-        try {
-            filterChain.doFilter(request, response);
-        } catch (Exception ex) {
-            log.error("Unexpected error in filter chain", ex);
-            throw ex;
-        }
+
+        filterChain.doFilter(request, response);
     }
 
-
-
-    private Optional<FirebaseToken> extractUserIdFromToken(String token) {
+    private Optional<FirebaseToken> extractFirebaseTokenFromToken(String token) {
         try {
             FirebaseToken firebaseToken = firebaseAuth.verifyIdToken(token, true);
-            //String userId = String.valueOf(firebaseToken.getClaims().get(USER_ID_CLAIM));
-            //! Logger
             log.debug("Extracted user_id claim: {}", firebaseToken.getUid());
-
             return Optional.of(firebaseToken);
         } catch (FirebaseAuthException exception) {
-            //! Logger
             log.error("FirebaseAuthException while verifying token: {}", exception.getMessage());
             return Optional.empty();
         }
     }
+
+
+
+
+//    private Optional<FirebaseToken> extractUserIdFromToken(String token) {
+//        try {
+//            FirebaseToken firebaseToken = firebaseAuth.verifyIdToken(token, true);
+//            //String userId = String.valueOf(firebaseToken.getClaims().get(USER_ID_CLAIM));
+//            //! Logger
+//            log.debug("Extracted user_id claim: {}", firebaseToken.getUid());
+//
+//            return Optional.of(firebaseToken);
+//        } catch (FirebaseAuthException exception) {
+//            //! Logger
+//            log.error("FirebaseAuthException while verifying token: {}", exception.getMessage());
+//            return Optional.empty();
+//        }
+//    }
 
 
 
