@@ -42,6 +42,7 @@ public class SecurityConfig {
     public SecurityFilterChain configure(HttpSecurity http, CorsConfigurationSource corsConfigurationSource) throws Exception {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
+                .csrf(csrf -> csrf.disable())  // 🛑 Disable CSRF for API usage
                 .authorizeHttpRequests(authManager -> {
                     authManager.requestMatchers(HttpMethod.POST, WHITELISTED_PUBLIC_API_ENDPOINTS).permitAll();
                     logRule("POST", WHITELISTED_PUBLIC_API_ENDPOINTS, "Permit All");
