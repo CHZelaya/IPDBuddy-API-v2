@@ -86,6 +86,7 @@ public class JobService {
                 submission.setBillableType(billablesType);
                 submission.setQuantity(itemsRequest.getQuantity());
                 submission.setTotalPrice(total);
+                submission.setRate(rate);
 
                 // Adding to list, not saving yet
                 billableItemsToSave.add(submission);
