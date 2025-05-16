@@ -16,13 +16,13 @@ public class SecurityConfig {
 
     private static final String[] WHITELISTED_PUBLIC_API_ENDPOINTS = { "/user", "/user/login", "/user/refresh-token" };
 
-    private static final String[] WHITELISTED_AUTHENTICATED_API_ENDPOINTS = {
-            "/api/v1/contractor/me",
-            "/api/v1/job/submit",
-            "/api/v1/job/jobs",
-    // Future:
-    // "/api/v1/job/jobs/*"
-    };
+//    private static final String[] WHITELISTED_AUTHENTICATED_API_ENDPOINTS = {
+//            "/api/v1/contractor/me",
+//            "/api/v1/job/submit",
+//            "/api/v1/job/jobs",
+//    // Future:
+//    // "/api/v1/job/jobs/*"
+//    };
 
     private final TokenAuthenticationFilter tokenAuthenticationFilter;
 
@@ -46,8 +46,12 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authManager -> {
 
                     authManager.requestMatchers(HttpMethod.POST, WHITELISTED_PUBLIC_API_ENDPOINTS).permitAll();
+                    authManager.requestMatchers(HttpMethod.POST, "/api/v1/job/submit").authenticated();
+                    authManager.requestMatchers(HttpMethod.GET, "/api/v1/job/jobs").authenticated();
+                    authManager.requestMatchers(HttpMethod.GET, "/api/v1/contractor/me").authenticated();
+                    authManager.requestMatchers(HttpMethod.PUT, "/api/v1/contractor/me").authenticated();
 
-                    authManager.requestMatchers(WHITELISTED_AUTHENTICATED_API_ENDPOINTS).authenticated();
+//                    authManager.requestMatchers(WHITELISTED_AUTHENTICATED_API_ENDPOINTS).authenticated();
 
                     // Default to requiring authentication for everything else
                     authManager.anyRequest().authenticated();
