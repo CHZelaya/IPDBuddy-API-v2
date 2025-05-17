@@ -44,6 +44,10 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .csrf(csrf -> csrf.disable())  // 🛑 Disable CSRF for API usage
                 .authorizeHttpRequests(authManager -> {
+
+                    authManager.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
+                    logRule("OPTIONS", "/**", "Permit All Preflight Requests");
+
                     authManager.requestMatchers(HttpMethod.POST, WHITELISTED_PUBLIC_API_ENDPOINTS).permitAll();
                     logRule("POST", WHITELISTED_PUBLIC_API_ENDPOINTS, "Permit All");
 
