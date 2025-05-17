@@ -142,7 +142,7 @@ public class JobService {
 //    }
 
     public JobSubmissionResponseDTO handleJobSubmission(String email, JobSubmissionRequestDTO requestDTO) {
-        final boolean DEMO_MODE = true;  // ✅ Toggle this to false to save to DB
+        final boolean DEMO_MODE = false;  // ✅ Toggle this to false to save to DB
 
         Contractor contractor = contractorRepo.findByEmail(email);
         if (contractor == null) {
