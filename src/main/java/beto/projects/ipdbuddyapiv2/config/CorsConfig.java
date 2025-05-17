@@ -17,7 +17,7 @@ public class CorsConfig {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
 
         // Allowed origins
-        corsConfiguration.setAllowedOrigins(List.of(
+        corsConfiguration.setAllowedOriginPatterns(List.of(
                 "http://localhost:3003",
                 "https://*.netlify.app"
         ));
@@ -33,8 +33,7 @@ public class CorsConfig {
 
         //Allowed headers
         corsConfiguration.setAllowedHeaders(List.of(
-                "Authorization",
-                "Content-Type"
+        "*"
         ));
 
         //Allowed credentials
