@@ -19,7 +19,7 @@ public class CorsConfig {
         // Allowed origins
         corsConfiguration.setAllowedOrigins(List.of(
                 "http://localhost:3003",
-                "https://teal-creponne-2f943b.netlify.app/"
+                "https://teal-creponne-2f943b.netlify.app"
         ));
 
         //Allowed methods

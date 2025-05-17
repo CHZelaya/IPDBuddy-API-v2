@@ -38,95 +38,108 @@ public class JobService {
 
     }
 
-//    public JobSubmissionResponseDTO handleJobSubmission(String email, JobSubmissionRequestDTO requestDTO) {
-//        //Fetching the Contractor ID from the request
-//        Contractor contractor = contractorRepo.findByEmail( email);
-//        // * Putting it here will result in the job being created with the grand total being multiplied by 0, equalling 0
-//
-//
-//        if (contractor == null){
-//            throw new EntityNotFoundException("Contractor matching email: "+ email + " not found.");
-//        }
-//
-//        //Creating and saving a new Job
-//        Job job = new Job();
-//        job.setContractor(contractor);
-//        job.setAddress(requestDTO.getAddress());
-//        job.setDate(requestDTO.getDate() != null ? requestDTO.getDate() : LocalDate.now());
-//
-//        job.setGrandTotalAmount(BigDecimal.ZERO);
-//        job.setSavingsAmount(BigDecimal.ZERO);
-//        job.setTaxAmount(BigDecimal.ZERO);
-//
-//        job = jobRepo.save(job); // Saving early to generate a job with an ID
-//
-//
-//
-//        //Preparing the summary
-//        List<BillableItemSummaryDTO> itemsSummaryList = new ArrayList<>();
-//        BigDecimal grandTotal = BigDecimal.ZERO;
-//        List<BillableItemsRequestDTO> itemsRequests = requestDTO.getBillables();
-//
-//        List<BillableItem> billableItemsToSave = new ArrayList<>();
-//
-//        if (itemsRequests != null && !itemsRequests.isEmpty()) {
-//            for (BillableItemsRequestDTO itemsRequest : requestDTO.getBillables()) {
-//                Billables billablesType = Billables.valueOf(itemsRequest.getBillableType());
-//                //* Calculate quantity * rate for each task done
-//                BigDecimal rate = billablesType.getRate();
-//                BigDecimal quantity = BigDecimal.valueOf(itemsRequest.getQuantity());
-//                BigDecimal total = rate.multiply(quantity);
-//
-//                //* Helper method(s) to check for special cases and amend total based on special cases
-//                if (billablesType.equals(Billables.FIRE_CAULKING)) {
-//                    total = capFireCaulkingPay(rate, quantity);
-//                }
-//
-//                BillableItem submission = new BillableItem();
-//                submission.setJob(job);
-//                submission.setBillableType(billablesType);
-//                submission.setQuantity(itemsRequest.getQuantity());
-//                submission.setTotalPrice(total);
-//                submission.setRate(rate);
-//
-//                // Adding to list, not saving yet
-//                billableItemsToSave.add(submission);
-//
-//                // Building response summary
-//                itemsSummaryList.add(
-//                        BillableItemSummaryDTO.builder()
-//                                .name(billablesType.name())
-//                                .description(billablesType.getDescription())
-//                                .quantity(itemsRequest.getQuantity())
-//                                .rate(rate)
-//                                .total(total)
-//                                .jobAddress(job.getAddress())
-//                                .jobDate(job.getDate())
-//                                .build()
-//                );
-//
-//                grandTotal = grandTotal.add(total);
-//            }
-//            //! This is what I was missing, batch saving all billables AFTER the loop.
-//            billableItemRepo.saveAll(billableItemsToSave);
-//
-//        }
-//
-//        job.setGrandTotalAmount(grandTotal);
-//        job.setTaxAmount(grandTotal.multiply(contractor.getTaxRate()));
-//        job.setSavingsAmount(grandTotal.multiply(contractor.getSavingsRate()));
-//        jobRepo.save(job);
-//
-//        JobSubmissionResponseDTO response = JobSubmissionResponseDTO.builder()
-//                .jobId(job.getId())
-//                .billableItemsSummary(itemsSummaryList)
-//                .grandTotalAmount(job.getGrandTotalAmount())
-//                .taxAmount(job.getTaxAmount())
-//                .savingsAmount(job.getSavingsAmount())
-//                .build();
-//
-//        return response;
-//    }
+    public JobSubmissionResponseDTO handleJobSubmission(String email, JobSubmissionRequestDTO requestDTO) {
+        //Fetching the Contractor ID from the request
+        Contractor contractor = contractorRepo.findByEmail( email);
+        // * Putting it here will result in the job being created with the grand total being multiplied by 0, equalling 0
+
+
+        if (contractor == null){
+            throw new EntityNotFoundException("Contractor matching email: "+ email + " not found.");
+        }
+
+        //Creating and saving a new Job
+        Job job = new Job();
+        job.setContractor(contractor);
+        job.setAddress(requestDTO.getAddress());
+        job.setDate(requestDTO.getDate() != null ? requestDTO.getDate() : LocalDate.now());
+
+        job.setGrandTotalAmount(BigDecimal.ZERO);
+        job.setSavingsAmount(BigDecimal.ZERO);
+        job.setTaxAmount(BigDecimal.ZERO);
+
+        job = jobRepo.save(job); // Saving early to generate a job with an ID
+
+
+
+        //Preparing the summary
+        List<BillableItemSummaryDTO> itemsSummaryList = new ArrayList<>();
+        BigDecimal grandTotal = BigDecimal.ZERO;
+        List<BillableItemsRequestDTO> itemsRequests = requestDTO.getBillables();
+
+        List<BillableItem> billableItemsToSave = new ArrayList<>();
+
+        if (itemsRequests != null && !itemsRequests.isEmpty()) {
+            for (BillableItemsRequestDTO itemsRequest : requestDTO.getBillables()) {
+                Billables billablesType = Billables.valueOf(itemsRequest.getBillableType());
+                //* Calculate quantity * rate for each task done
+                BigDecimal rate = billablesType.getRate();
+                BigDecimal quantity = BigDecimal.valueOf(itemsRequest.getQuantity());
+                BigDecimal total = rate.multiply(quantity);
+
+                //* Helper method(s) to check for special cases and amend total based on special cases
+                if (billablesType.equals(Billables.FIRE_CAULKING)) {
+                    total = capFireCaulkingPay(rate, quantity);
+                }
+
+                BillableItem submission = new BillableItem();
+                submission.setJob(job);
+                submission.setBillableType(billablesType);
+                submission.setQuantity(itemsRequest.getQuantity());
+                submission.setTotalPrice(total);
+                submission.setRate(rate);
+
+                // Adding to list, not saving yet
+                billableItemsToSave.add(submission);
+
+                // Building response summary
+                itemsSummaryList.add(
+                        BillableItemSummaryDTO.builder()
+                                .name(billablesType.name())
+                                .description(billablesType.getDescription())
+                                .quantity(itemsRequest.getQuantity())
+                                .rate(rate)
+                                .total(total)
+                                .jobAddress(job.getAddress())
+                                .jobDate(job.getDate())
+                                .build()
+                );
+
+                grandTotal = grandTotal.add(total);
+            }
+            //! This is what I was missing, batch saving all billables AFTER the loop.
+            billableItemRepo.saveAll(billableItemsToSave);
+
+        }
+
+        job.setGrandTotalAmount(grandTotal);
+        job.setTaxAmount(grandTotal.multiply(contractor.getTaxRate()));
+        job.setSavingsAmount(grandTotal.multiply(contractor.getSavingsRate()));
+        // ✅ DEMO MODE TOGGLE 🟠
+        boolean DEMO_MODE = true;
+        if (DEMO_MODE) {
+            System.out.println("\n🚧 DEMO MODE ACTIVE - Job NOT persisted to DB. Returning calculated totals only.\n");
+            return JobSubmissionResponseDTO.builder()
+                    .jobId(null)  // No actual DB ID since not saved
+                    .billableItemsSummary(itemsSummaryList)
+                    .grandTotalAmount(grandTotal)
+                    .taxAmount(grandTotal.multiply(contractor.getTaxRate()))
+                    .savingsAmount(grandTotal.multiply(contractor.getSavingsRate()))
+                    .build();
+        }
+
+        jobRepo.save(job);
+
+        JobSubmissionResponseDTO response = JobSubmissionResponseDTO.builder()
+                .jobId(job.getId())
+                .billableItemsSummary(itemsSummaryList)
+                .grandTotalAmount(job.getGrandTotalAmount())
+                .taxAmount(job.getTaxAmount())
+                .savingsAmount(job.getSavingsAmount())
+                .build();
+
+        return response;
+    }
 
     private BigDecimal capFireCaulkingPay(BigDecimal rate, BigDecimal quantity) {
         final BigDecimal maxPay = new BigDecimal("75.00");
@@ -208,98 +221,98 @@ public class JobService {
     }
 
 
+//
+//
+//    public JobSubmissionResponseDTO preCalculateJobSubmission(String email, JobSubmissionRequestDTO requestDTO) {
+//        Contractor contractor = contractorRepo.findByEmail(email);
+//
+//        if (contractor == null) {
+//            throw new EntityNotFoundException("Contractor matching email: " + email + " not found.");
+//        }
+//
+//        List<BillableItemSummaryDTO> itemsSummaryList = new ArrayList<>();
+//        BigDecimal grandTotal = BigDecimal.ZERO;
+//
+//        List<BillableItemsRequestDTO> itemsRequests = requestDTO.getBillables();
+//
+//        if (itemsRequests != null && !itemsRequests.isEmpty()) {
+//            for (BillableItemsRequestDTO itemsRequest : itemsRequests) {
+//                Billables billablesType = Billables.valueOf(itemsRequest.getBillableType());
+//                BigDecimal rate = billablesType.getRate();
+//                BigDecimal quantity = BigDecimal.valueOf(itemsRequest.getQuantity());
+//                BigDecimal total = rate.multiply(quantity);
+//
+//                if (billablesType.equals(Billables.FIRE_CAULKING)) {
+//                    total = capFireCaulkingPay(rate, quantity);
+//                }
+//
+//                itemsSummaryList.add(
+//                        BillableItemSummaryDTO.builder()
+//                                .name(billablesType.name())
+//                                .description(billablesType.getDescription())
+//                                .quantity(itemsRequest.getQuantity())
+//                                .rate(rate)
+//                                .total(total)
+//                                .jobAddress(requestDTO.getAddress())
+//                                .jobDate(requestDTO.getDate() != null ? requestDTO.getDate() : LocalDate.now())
+//                                .build()
+//                );
+//
+//                grandTotal = grandTotal.add(total);
+//            }
+//        }
+//
+//        return JobSubmissionResponseDTO.builder()
+//                .jobId(null)  // No persistence yet, so no job ID
+//                .billableItemsSummary(itemsSummaryList)
+//                .grandTotalAmount(grandTotal)
+//                .taxAmount(grandTotal.multiply(contractor.getTaxRate()))
+//                .savingsAmount(grandTotal.multiply(contractor.getSavingsRate()))
+//                .build();
+//    }
 
-
-    public JobSubmissionResponseDTO preCalculateJobSubmission(String email, JobSubmissionRequestDTO requestDTO) {
-        Contractor contractor = contractorRepo.findByEmail(email);
-
-        if (contractor == null) {
-            throw new EntityNotFoundException("Contractor matching email: " + email + " not found.");
-        }
-
-        List<BillableItemSummaryDTO> itemsSummaryList = new ArrayList<>();
-        BigDecimal grandTotal = BigDecimal.ZERO;
-
-        List<BillableItemsRequestDTO> itemsRequests = requestDTO.getBillables();
-
-        if (itemsRequests != null && !itemsRequests.isEmpty()) {
-            for (BillableItemsRequestDTO itemsRequest : itemsRequests) {
-                Billables billablesType = Billables.valueOf(itemsRequest.getBillableType());
-                BigDecimal rate = billablesType.getRate();
-                BigDecimal quantity = BigDecimal.valueOf(itemsRequest.getQuantity());
-                BigDecimal total = rate.multiply(quantity);
-
-                if (billablesType.equals(Billables.FIRE_CAULKING)) {
-                    total = capFireCaulkingPay(rate, quantity);
-                }
-
-                itemsSummaryList.add(
-                        BillableItemSummaryDTO.builder()
-                                .name(billablesType.name())
-                                .description(billablesType.getDescription())
-                                .quantity(itemsRequest.getQuantity())
-                                .rate(rate)
-                                .total(total)
-                                .jobAddress(requestDTO.getAddress())
-                                .jobDate(requestDTO.getDate() != null ? requestDTO.getDate() : LocalDate.now())
-                                .build()
-                );
-
-                grandTotal = grandTotal.add(total);
-            }
-        }
-
-        return JobSubmissionResponseDTO.builder()
-                .jobId(null)  // No persistence yet, so no job ID
-                .billableItemsSummary(itemsSummaryList)
-                .grandTotalAmount(grandTotal)
-                .taxAmount(grandTotal.multiply(contractor.getTaxRate()))
-                .savingsAmount(grandTotal.multiply(contractor.getSavingsRate()))
-                .build();
-    }
-
-
-    public JobSubmissionResponseDTO preCalculateJobSubmissionWithoutContractor(@Valid JobSubmissionRequestDTO requestDTO) {
-        List<BillableItemSummaryDTO> itemsSummaryList = new ArrayList<>();
-        BigDecimal grandTotal = BigDecimal.ZERO;
-
-        List<BillableItemsRequestDTO> itemsRequests = requestDTO.getBillables();
-
-        if (itemsRequests != null && !itemsRequests.isEmpty()) {
-            for (BillableItemsRequestDTO itemsRequest : itemsRequests) {
-                Billables billablesType = Billables.valueOf(itemsRequest.getBillableType());
-                BigDecimal rate = billablesType.getRate();
-                BigDecimal quantity = BigDecimal.valueOf(itemsRequest.getQuantity());
-                BigDecimal total = rate.multiply(quantity);
-
-                if (billablesType.equals(Billables.FIRE_CAULKING)) {
-                    total = capFireCaulkingPay(rate, quantity);
-                }
-
-                itemsSummaryList.add(
-                        BillableItemSummaryDTO.builder()
-                                .name(billablesType.name())
-                                .description(billablesType.getDescription())
-                                .quantity(itemsRequest.getQuantity())
-                                .rate(rate)
-                                .total(total)
-                                .jobAddress(requestDTO.getAddress())
-                                .jobDate(requestDTO.getDate() != null ? requestDTO.getDate() : LocalDate.now())
-                                .build()
-                );
-
-                grandTotal = grandTotal.add(total);
-            }
-        }
-
-        return JobSubmissionResponseDTO.builder()
-                .jobId(null)  // No persistence yet
-                .billableItemsSummary(itemsSummaryList)
-                .grandTotalAmount(grandTotal)
-                .taxAmount(BigDecimal.ZERO)    // Contractor missing, no tax
-                .savingsAmount(BigDecimal.ZERO) // Contractor missing, no savings
-                .build();
-    }
+//
+//    public JobSubmissionResponseDTO preCalculateJobSubmissionWithoutContractor(@Valid JobSubmissionRequestDTO requestDTO) {
+//        List<BillableItemSummaryDTO> itemsSummaryList = new ArrayList<>();
+//        BigDecimal grandTotal = BigDecimal.ZERO;
+//
+//        List<BillableItemsRequestDTO> itemsRequests = requestDTO.getBillables();
+//
+//        if (itemsRequests != null && !itemsRequests.isEmpty()) {
+//            for (BillableItemsRequestDTO itemsRequest : itemsRequests) {
+//                Billables billablesType = Billables.valueOf(itemsRequest.getBillableType());
+//                BigDecimal rate = billablesType.getRate();
+//                BigDecimal quantity = BigDecimal.valueOf(itemsRequest.getQuantity());
+//                BigDecimal total = rate.multiply(quantity);
+//
+//                if (billablesType.equals(Billables.FIRE_CAULKING)) {
+//                    total = capFireCaulkingPay(rate, quantity);
+//                }
+//
+//                itemsSummaryList.add(
+//                        BillableItemSummaryDTO.builder()
+//                                .name(billablesType.name())
+//                                .description(billablesType.getDescription())
+//                                .quantity(itemsRequest.getQuantity())
+//                                .rate(rate)
+//                                .total(total)
+//                                .jobAddress(requestDTO.getAddress())
+//                                .jobDate(requestDTO.getDate() != null ? requestDTO.getDate() : LocalDate.now())
+//                                .build()
+//                );
+//
+//                grandTotal = grandTotal.add(total);
+//            }
+//        }
+//
+//        return JobSubmissionResponseDTO.builder()
+//                .jobId(null)  // No persistence yet
+//                .billableItemsSummary(itemsSummaryList)
+//                .grandTotalAmount(grandTotal)
+//                .taxAmount(BigDecimal.ZERO)    // Contractor missing, no tax
+//                .savingsAmount(BigDecimal.ZERO) // Contractor missing, no savings
+//                .build();
+//    }
 
 
     //! Implement later - Get this shipped.
