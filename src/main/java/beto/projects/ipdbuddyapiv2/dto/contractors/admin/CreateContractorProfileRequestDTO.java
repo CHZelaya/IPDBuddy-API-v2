@@ -1,4 +1,4 @@
-package beto.projects.ipdbuddyapiv2.dto.contractors;
+package beto.projects.ipdbuddyapiv2.dto.contractors.admin;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 
 @Builder
 @AllArgsConstructor
-public class ContractorProfileDTO {
+public class CreateContractorProfileRequestDTO {
 
     @NotNull
     @Pattern(regexp = "^[A-Za-zÀ-ÿ]+(-[A-Za-zÀ-ÿ]+)*$\n")
@@ -32,7 +32,7 @@ public class ContractorProfileDTO {
 
     private BigDecimal savingsRate = BigDecimal.valueOf(00.10);
 
-    public ContractorProfileDTO() {
+    public CreateContractorProfileRequestDTO() {
     }
 
     public String getFirstName() {

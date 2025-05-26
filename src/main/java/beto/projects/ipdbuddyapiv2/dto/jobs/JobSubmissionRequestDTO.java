@@ -1,6 +1,6 @@
 package beto.projects.ipdbuddyapiv2.dto.jobs;
 
-import beto.projects.ipdbuddyapiv2.dto.billables.BillableItemsRequestDTO;
+import beto.projects.ipdbuddyapiv2.dto.billables.BillableItemInputDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 
@@ -13,7 +13,7 @@ public class JobSubmissionRequestDTO {
 
     private LocalDate date;
     private String address;
-    private List<BillableItemsRequestDTO> billables;
+    private List<BillableItemInputDTO> billables;
 
     public JobSubmissionRequestDTO() {
     }
@@ -26,7 +26,7 @@ public class JobSubmissionRequestDTO {
         return address;
     }
 
-    public List<BillableItemsRequestDTO> getBillables() {
+    public List<BillableItemInputDTO> getBillables() {
         return billables;
     }
 

@@ -8,7 +8,7 @@ import java.time.LocalDate;
 
 @Builder
 @AllArgsConstructor
-public class BillableItemSummaryDTO {
+public class BillableItemSummaryResponseDTO {
 
     private String name;
     private String type;
@@ -19,7 +19,7 @@ public class BillableItemSummaryDTO {
     private String jobAddress;
     private LocalDate jobDate;
 
-    public BillableItemSummaryDTO() {
+    public BillableItemSummaryResponseDTO() {
     }
 
     public String getName() {

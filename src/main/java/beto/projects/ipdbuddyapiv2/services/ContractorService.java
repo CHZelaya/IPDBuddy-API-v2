@@ -1,6 +1,6 @@
 package beto.projects.ipdbuddyapiv2.services;
 
-import beto.projects.ipdbuddyapiv2.dto.contractors.ContractorProfileDTO;
+import beto.projects.ipdbuddyapiv2.dto.contractors.admin.CreateContractorProfileRequestDTO;
 import beto.projects.ipdbuddyapiv2.dto.contractors.ContractorProfileResponseDTO;
 import beto.projects.ipdbuddyapiv2.dto.contractors.ContractorProfileUpdateDTO;
 import beto.projects.ipdbuddyapiv2.entities.Contractor;
@@ -56,7 +56,7 @@ public class ContractorService {
 
     }
 
-    public void adminCreateContractorProfile(@Valid ContractorProfileDTO dto){
+    public void adminCreateContractorProfile(@Valid CreateContractorProfileRequestDTO dto){
 
         Contractor contractor = new Contractor();
         contractor.setFirstName(dto.getFirstName());

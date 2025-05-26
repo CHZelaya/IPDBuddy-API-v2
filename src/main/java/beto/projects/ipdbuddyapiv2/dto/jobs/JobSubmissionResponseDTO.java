@@ -1,6 +1,6 @@
 package beto.projects.ipdbuddyapiv2.dto.jobs;
 
-import beto.projects.ipdbuddyapiv2.dto.billables.BillableItemSummaryDTO;
+import beto.projects.ipdbuddyapiv2.dto.billables.BillableItemSummaryResponseDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 
@@ -17,7 +17,7 @@ public class JobSubmissionResponseDTO {
     private BigDecimal grandTotalAmount;
     private String message;
 
-    private List<BillableItemSummaryDTO> billableItemsSummary;
+    private List<BillableItemSummaryResponseDTO> billableItemsSummary;
 
     public JobSubmissionResponseDTO() {
     }
@@ -42,7 +42,7 @@ public class JobSubmissionResponseDTO {
         return message;
     }
 
-    public List<BillableItemSummaryDTO> getBillableItemsSummary() {
+    public List<BillableItemSummaryResponseDTO> getBillableItemsSummary() {
         return billableItemsSummary;
     }
 

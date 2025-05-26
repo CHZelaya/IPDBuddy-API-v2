@@ -32,7 +32,7 @@ public class JobController {
 
 
     @PostMapping("/submit")
-    public ResponseEntity<Void> submitJob(
+    public ResponseEntity<JobSubmissionResponseDTO> submitJob(
             Authentication authentication,
             @RequestBody @Valid JobSubmissionRequestDTO requestDTO) {
 
@@ -46,8 +46,8 @@ public class JobController {
         String email = firebaseToken.getEmail();
 
         try {
-            jobService.handleJobSubmission(email, requestDTO);
-            return ResponseEntity.ok().build();
+            JobSubmissionResponseDTO responseDTO = jobService.handleJobSubmission(email, requestDTO);
+            return ResponseEntity.ok(responseDTO);
 
         } catch (EntityNotFoundException e) {
             log.error("Contractor not found for email {}: {}", email, e.getMessage());

@@ -5,13 +5,13 @@ import lombok.Builder;
 
 @Builder
 @AllArgsConstructor
-public class BillableItemsRequestDTO {
+public class BillableItemInputDTO {
 
     private String billableType;
     private int quantity;
 
 
-    public BillableItemsRequestDTO() {
+    public BillableItemInputDTO() {
     }
 
     public String getBillableType() {
