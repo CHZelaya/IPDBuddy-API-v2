@@ -40,7 +40,7 @@ public class Job {
     @NotNull
     private BigDecimal savingsAmount;
 
-    @Lob
+    @Column(columnDefinition = "TEXT")
     private String notes;
 
     public Job() {
@@ -94,6 +94,10 @@ public class Job {
         return savingsAmount;
     }
 
+    public String getNotes() {
+        return notes;
+    }
+
     public void setGrandTotalAmount(BigDecimal grandTotalAmount) {
         this.grandTotalAmount = grandTotalAmount;
     }
@@ -106,9 +110,6 @@ public class Job {
         this.savingsAmount = savingsAmount;
     }
 
-    public String getNotes() {
-        return notes;
-    }
 
     public void setNotes(String notes) {
         this.notes = notes;

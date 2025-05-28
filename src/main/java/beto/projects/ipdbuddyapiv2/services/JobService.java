@@ -50,8 +50,13 @@ public class JobService {
         }
 
         Job job = new Job();
+        job.setContractor(contractor);
+        log.info("Job being created for contractor: {} ({})", contractor.getFirstName(), contractor.getEmail());
+
         job.setDate(requestDTO.getDate() != null ? requestDTO.getDate() : LocalDate.now());
         job.setAddress(requestDTO.getAddress());
+        job.setNotes(requestDTO.getNotes());
+
         boolean jobSaved = false;
         boolean billablesSaved = false;
 
@@ -90,6 +95,7 @@ public class JobService {
                 itemsSummaryList.add(
                         BillableItemSummaryResponseDTO.builder()
                                 .name(billablesType.name())
+                                .type(billablesType.name())
                                 .description(billablesType.getDescription())
                                 .quantity(itemsRequest.getQuantity())
                                 .rate(rate)
@@ -128,13 +134,14 @@ public class JobService {
         }
 
         //Building the response despite persistence.
-
+        System.out.println("Job Service: Building the response!");
         return JobSubmissionResponseDTO.builder()
                 .jobId(jobSaved ? job.getId() : null)
                 .billableItemsSummary(itemsSummaryList)
                 .grandTotalAmount(grandTotal)
                 .taxAmount(job.getTaxAmount())
                 .savingsAmount(job.getSavingsAmount())
+                .notes(job.getNotes())
                 .build();
 
     }

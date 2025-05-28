@@ -101,7 +101,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 //            return Optional.of(firebaseToken);
 //        } catch (FirebaseAuthException exception) {
 //            //! Logger
-//            log.error("FirebaseAuthException while verifying token: {}", exception.getMessage());
+//            log.error("FirebaseAuthException while verifying token: {}", exception.getNotes());
 //            return Optional.empty();
 //        }
 //    }

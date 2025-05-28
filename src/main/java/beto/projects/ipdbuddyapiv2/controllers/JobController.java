@@ -47,6 +47,7 @@ public class JobController {
 
         try {
             JobSubmissionResponseDTO responseDTO = jobService.handleJobSubmission(email, requestDTO);
+            System.out.println("Sending the Response back to the front end!" + responseDTO);
             return ResponseEntity.ok(responseDTO);
 
         } catch (EntityNotFoundException e) {

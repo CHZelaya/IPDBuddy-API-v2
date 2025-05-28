@@ -15,7 +15,7 @@ public class JobSubmissionResponseDTO {
     private BigDecimal taxAmount;
     private BigDecimal savingsAmount;
     private BigDecimal grandTotalAmount;
-    private String message;
+    private String notes;
 
     private List<BillableItemSummaryResponseDTO> billableItemsSummary;
 
@@ -38,8 +38,8 @@ public class JobSubmissionResponseDTO {
         return grandTotalAmount;
     }
 
-    public String getMessage() {
-        return message;
+    public String getNotes() {
+        return notes;
     }
 
     public List<BillableItemSummaryResponseDTO> getBillableItemsSummary() {
@@ -53,7 +53,7 @@ public class JobSubmissionResponseDTO {
                 ", taxAmount=" + taxAmount +
                 ", savingsAmount=" + savingsAmount +
                 ", grandTotalAmount=" + grandTotalAmount +
-                ", message='" + message + '\'' +
+                ", notes='" + notes + '\'' +
                 ", billableItemsSummary=" + billableItemsSummary +
                 '}';
     }
