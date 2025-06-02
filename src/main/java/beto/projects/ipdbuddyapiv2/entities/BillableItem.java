@@ -26,7 +26,7 @@ public class BillableItem {
     @NotNull
     private BigDecimal totalPrice;
 
-    private String notes;
+
 
     @NotNull
     @ManyToOne
@@ -69,14 +69,6 @@ public class BillableItem {
 
     public void setTotalPrice(BigDecimal totalPrice) {
         this.totalPrice = totalPrice;
-    }
-
-    public String getNotes() {
-        return notes;
-    }
-
-    public void setNotes(String notes) {
-        this.notes = notes;
     }
 
     public Job getJob() {
