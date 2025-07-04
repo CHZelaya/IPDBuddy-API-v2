@@ -26,6 +26,7 @@ public class ContractorController {
         this.contractorService = contractorService;
     }
 
+
     @GetMapping("/me")
     public ResponseEntity<ContractorProfileResponseDTO> getMyProfile(Authentication authentication) {
         FirebaseToken firebaseToken = (FirebaseToken) authentication.getPrincipal();

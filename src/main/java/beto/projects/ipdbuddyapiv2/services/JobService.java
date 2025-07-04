@@ -14,6 +14,7 @@ import beto.projects.ipdbuddyapiv2.repos.BillableItemRepo;
 import beto.projects.ipdbuddyapiv2.repos.ContractorRepo;
 import beto.projects.ipdbuddyapiv2.repos.JobRepo;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.firebase.auth.FirebaseToken;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +42,16 @@ public class JobService {
 
     }
 
+    /**
+     * Handles the submission of a job, including creating a job entity, calculating relevant financial details,
+     * saving the job and associated billable items, and preparing a response with the submission details.
+     *
+     * @param email the email address of the contractor submitting the job
+     * @param requestDTO the job submission request details containing information such as date, address, notes, and billable items
+     * @return a {@code JobSubmissionResponseDTO} containing the details of the submitted job, including
+     *         the job ID (if successfully saved), billable item summaries, grand total amount, tax amount, savings amount, and any relevant notes
+     * @throws EntityNotFoundException if a contractor with the specified email does not exist
+     */
     public JobSubmissionResponseDTO handleJobSubmission(String email, JobSubmissionRequestDTO requestDTO) {
         //Fetching the Contractor ID from the request
         Contractor contractor = contractorRepo.findByEmail( email);
@@ -147,7 +158,15 @@ public class JobService {
     }
 
 
-
+    /**
+     * Calculates the total pay for fire caulking work based on the given rate and quantity,
+     * capping the pay at a maximum value of $75.00.
+     * A helper method used by handleJobSubmission
+     *
+     * @param rate the rate per unit of fire caulking work
+     * @param quantity the quantity of work completed
+     * @return the capped total pay for the fire caulking work as a BigDecimal.
+     */
     private BigDecimal capFireCaulkingPay(BigDecimal rate, BigDecimal quantity) {
         final BigDecimal maxPay = new BigDecimal("75.00");
         final BigDecimal total = rate.multiply(quantity);
@@ -160,12 +179,13 @@ public class JobService {
 
 
 
-    public List<JobResponseDTO> getAllContractorJobs(String email) {
+    public List<JobResponseDTO> getAllContractorJobs(FirebaseToken firebaseToken) {
+
+        String email = firebaseToken.getEmail();
 
         Contractor contractor = contractorRepo.findByEmail(email);
-
         if (contractor == null) {
-            throw new EntityNotFoundException("Contractor not found");
+            throw new EntityNotFoundException("Contractor not found for email: " + email);
         }
 
         // Grabbing the Id from the email
@@ -177,7 +197,7 @@ public class JobService {
 
         for (Job job : jobs) {
 
-            JobResponseDTO.builder()
+            JobResponseDTO dto = JobResponseDTO.builder()
                     .jobId(job.getId())
                     .taxAmount(job.getTaxAmount())
                     .savingsAmount(job.getSavingsAmount())
@@ -186,6 +206,8 @@ public class JobService {
                     .date(job.getDate())
                     .address(job.getAddress())
                     .build();
+
+            jobResponseDto.add(dto);
         }
 
         return jobResponseDto;

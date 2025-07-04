@@ -21,6 +21,13 @@ public class ContractorService {
 
     /* METHODS */
 
+    /**
+     * Retrieves the contractor information associated with the provided email.
+     *
+     * @param email The email of the contractor to be retrieved.
+     * @return A ContractorProfileResponseDTO containing the contractor's profile details.
+     * @throws EntityNotFoundException If no contractor is found with the specified email.
+     */
     public ContractorProfileResponseDTO getContractorByEmail(String email) {
         Contractor contractor = contractorRepo.findByEmail(email);
 
@@ -39,6 +46,13 @@ public class ContractorService {
     }
 
 
+    /**
+     * Updates the profile information of a contractor based on the provided email and update data.
+     *
+     * @param email The email of the contractor whose profile is to be updated.
+     * @param dto The data transfer object containing the updated profile information.
+     * @throws EntityNotFoundException if no contractor is found for the provided email.
+     */
     public void updateProfile(String email, @Valid ContractorProfileUpdateDTO dto) {
         Contractor contractor = contractorRepo.findByEmail(email);
 

@@ -67,9 +67,7 @@ public class JobController {
             Authentication authentication) {
 
         FirebaseToken firebaseToken = (FirebaseToken) authentication.getPrincipal();
-        String email = firebaseToken.getEmail();
-
-        List<JobResponseDTO> responseDTO = jobService.getAllContractorJobs(email);
+        List<JobResponseDTO> responseDTO = jobService.getAllContractorJobs(firebaseToken);
         return ResponseEntity.ok(responseDTO);
 
     }
