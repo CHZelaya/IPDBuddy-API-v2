@@ -16,6 +16,9 @@ public class ContractorProfileResponseDTO {
     private BigDecimal taxRate;
     private BigDecimal savingsRate;
 
+    private EarningsSummaryDTO earningsSummary;
+
+
     public ContractorProfileResponseDTO() {
     }
 
@@ -41,6 +44,10 @@ public class ContractorProfileResponseDTO {
 
     public BigDecimal getSavingsRate() {
         return savingsRate;
+    }
+
+    public EarningsSummaryDTO getEarningsSummary() {
+        return earningsSummary;
     }
 
     @Override

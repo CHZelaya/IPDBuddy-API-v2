@@ -1,6 +1,6 @@
 package beto.projects.ipdbuddyapiv2.controllers;
 
-import beto.projects.ipdbuddyapiv2.dto.jobs.JobResponseDTO;
+import beto.projects.ipdbuddyapiv2.dto.jobs.JobSummaryDTO;
 import beto.projects.ipdbuddyapiv2.dto.jobs.JobSubmissionRequestDTO;
 import beto.projects.ipdbuddyapiv2.dto.jobs.JobSubmissionResponseDTO;
 import beto.projects.ipdbuddyapiv2.services.JobService;
@@ -62,12 +62,12 @@ public class JobController {
 
 
     //! Live on API, not implemented on Frontend yet.
-    @GetMapping("/jobs")
-    public ResponseEntity<List<JobResponseDTO>> getAllContractorJobs(
+    @GetMapping("/job-summaries")
+    public ResponseEntity<List<JobSummaryDTO>> getAllContractorJobs(
             Authentication authentication) {
 
         FirebaseToken firebaseToken = (FirebaseToken) authentication.getPrincipal();
-        List<JobResponseDTO> responseDTO = jobService.getAllContractorJobs(firebaseToken);
+        List<JobSummaryDTO> responseDTO = jobService.getAllContractorJobs(firebaseToken);
         return ResponseEntity.ok(responseDTO);
 
     }

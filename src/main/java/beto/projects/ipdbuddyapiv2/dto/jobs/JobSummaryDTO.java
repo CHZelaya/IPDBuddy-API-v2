@@ -8,18 +8,18 @@ import java.time.LocalDate;
 import java.util.List;
 
 @AllArgsConstructor
-public class JobResponseDTO {
+public class JobSummaryDTO {
 
     private Long jobId;
     private BigDecimal taxAmount;
     private BigDecimal savingsAmount;
     private BigDecimal grandTotalAmount;
-    private String notes;
+
     private LocalDate date = LocalDate.now();
     private String address;
     private List<BillableItem> billableItems;
 
-    public JobResponseDTO() {
+    public JobSummaryDTO() {
     }
 
     //? Learning about builder patterns here
@@ -33,7 +33,7 @@ public class JobResponseDTO {
         private BigDecimal taxAmount;
         private BigDecimal savingsAmount;
         private BigDecimal grandTotalAmount;
-        private String notes;
+
         private LocalDate date;
         private String address;
         private List<BillableItem> billableItems;
@@ -60,10 +60,6 @@ public class JobResponseDTO {
             return this;
         }
 
-        public Builder notes(String notes){
-            this.notes = notes;
-            return this;
-        }
 
         public Builder date(LocalDate date){
             this.date = date;
@@ -81,14 +77,13 @@ public class JobResponseDTO {
         }
 
         //? build() method creates the DTO when called
-        public JobResponseDTO build(){
-            JobResponseDTO dto = new JobResponseDTO();
+        public JobSummaryDTO build(){
+            JobSummaryDTO dto = new JobSummaryDTO();
 
             dto.jobId = this.jobId;
             dto.taxAmount = this.taxAmount;
             dto.savingsAmount = this.savingsAmount;
             dto.grandTotalAmount = this.grandTotalAmount;
-            dto.notes = this.notes;
             dto.date = this.date;
             dto.address = this.address;
             dto.billableItems = this.billableItems;
@@ -117,10 +112,6 @@ public class JobResponseDTO {
         return grandTotalAmount;
     }
 
-    public String getNotes() {
-        return notes;
-    }
-
     public LocalDate getDate() {
         return date;
     }
@@ -140,7 +131,6 @@ public class JobResponseDTO {
                 ", taxAmount=" + taxAmount +
                 ", savingsAmount=" + savingsAmount +
                 ", grandTotalAmount=" + grandTotalAmount +
-                ", notes='" + notes + '\'' +
                 ", date=" + date +
                 ", address='" + address + '\'' +
                 '}';

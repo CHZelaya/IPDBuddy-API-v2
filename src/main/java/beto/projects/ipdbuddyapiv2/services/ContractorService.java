@@ -1,5 +1,6 @@
 package beto.projects.ipdbuddyapiv2.services;
 
+import beto.projects.ipdbuddyapiv2.dto.contractors.EarningsSummaryDTO;
 import beto.projects.ipdbuddyapiv2.dto.contractors.admin.CreateContractorProfileRequestDTO;
 import beto.projects.ipdbuddyapiv2.dto.contractors.ContractorProfileResponseDTO;
 import beto.projects.ipdbuddyapiv2.dto.contractors.ContractorProfileUpdateDTO;
@@ -14,9 +15,11 @@ import org.springframework.stereotype.Service;
 public class ContractorService {
 
     private final ContractorRepo contractorRepo;
+    private final JobService jobService;
 
-    public ContractorService(ContractorRepo contractorRepo) {
+    public ContractorService(ContractorRepo contractorRepo, JobService jobService) {
         this.contractorRepo = contractorRepo;
+        this.jobService = jobService;
     }
 
     /* METHODS */
@@ -35,6 +38,8 @@ public class ContractorService {
         throw new EntityNotFoundException("Contractor not found for email: " + email);
         }
 
+        EarningsSummaryDTO summaryDTO = jobService.calculateEarningsSummaryForContractor(contractor);
+
         return ContractorProfileResponseDTO.builder()
                 .firstName(contractor.getFirstName())
                 .lastName(contractor.getLastName())
@@ -42,6 +47,7 @@ public class ContractorService {
                 .phoneNumber(contractor.getPhoneNumber())
                 .savingsRate(contractor.getSavingsRate())
                 .taxRate(contractor.getTaxRate())
+                .earningsSummary(summaryDTO)
                 .build();
     }
 

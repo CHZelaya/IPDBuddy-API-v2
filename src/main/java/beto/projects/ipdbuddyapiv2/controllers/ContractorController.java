@@ -35,11 +35,12 @@ public class ContractorController {
 
         ContractorProfileResponseDTO dto = contractorService.getContractorByEmail(email);
 
+
         return ResponseEntity.ok(dto);
     }
 
 
-    @PutMapping("/me")
+    @PutMapping("/update-profile")
     public ResponseEntity<?> updateMyProfile(
             Authentication authentication,
             @Valid @RequestBody ContractorProfileUpdateDTO dto) {

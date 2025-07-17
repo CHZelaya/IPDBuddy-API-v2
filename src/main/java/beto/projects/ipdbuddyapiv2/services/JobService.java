@@ -3,7 +3,8 @@ package beto.projects.ipdbuddyapiv2.services;
 
 import beto.projects.ipdbuddyapiv2.dto.billables.BillableItemSummaryResponseDTO;
 import beto.projects.ipdbuddyapiv2.dto.billables.BillableItemInputDTO;
-import beto.projects.ipdbuddyapiv2.dto.jobs.JobResponseDTO;
+import beto.projects.ipdbuddyapiv2.dto.contractors.EarningsSummaryDTO;
+import beto.projects.ipdbuddyapiv2.dto.jobs.JobSummaryDTO;
 import beto.projects.ipdbuddyapiv2.dto.jobs.JobSubmissionRequestDTO;
 import beto.projects.ipdbuddyapiv2.dto.jobs.JobSubmissionResponseDTO;
 import beto.projects.ipdbuddyapiv2.entities.BillableItem;
@@ -179,7 +180,7 @@ public class JobService {
 
 
 
-    public List<JobResponseDTO> getAllContractorJobs(FirebaseToken firebaseToken) {
+    public List<JobSummaryDTO> getAllContractorJobs(FirebaseToken firebaseToken) {
 
         String email = firebaseToken.getEmail();
 
@@ -193,16 +194,15 @@ public class JobService {
 
         List<Job> jobs = jobRepo.findAllByContractor_Id(contractorId);
 
-        List<JobResponseDTO> jobResponseDto = new ArrayList<>();
+        List<JobSummaryDTO> jobResponseDto = new ArrayList<>();
 
         for (Job job : jobs) {
 
-            JobResponseDTO dto = JobResponseDTO.builder()
+            JobSummaryDTO dto = JobSummaryDTO.builder()
                     .jobId(job.getId())
                     .taxAmount(job.getTaxAmount())
                     .savingsAmount(job.getSavingsAmount())
                     .grandTotalAmount(job.getGrandTotalAmount())
-                    .notes(job.getNotes())
                     .date(job.getDate())
                     .address(job.getAddress())
                     .build();
@@ -212,6 +212,54 @@ public class JobService {
 
         return jobResponseDto;
 
+    }
+
+    public EarningsSummaryDTO calculateEarningsSummaryForContractor(Contractor contractor) {
+        if (contractor == null) {
+            throw new EntityNotFoundException("Contractor not found.");
+        }
+
+        List<Job> jobs = jobRepo.findAllByContractor_Id(contractor.getId());
+
+        BigDecimal totalEarnings = BigDecimal.ZERO;
+        BigDecimal earnedThisWeek = BigDecimal.ZERO;
+        BigDecimal earnedThisMonth = BigDecimal.ZERO;
+        BigDecimal earnedThisYear = BigDecimal.ZERO;
+        BigDecimal highestJobValue = BigDecimal.ZERO;
+
+        LocalDate today = LocalDate.now();
+        LocalDate startOfWeek = today.minusDays(today.getDayOfWeek().getValue() - 1);
+        LocalDate startOfMonth = today.withDayOfMonth(1);
+        LocalDate startOfYear = today.withDayOfYear(1);
+
+        for (Job job : jobs) {
+            totalEarnings = totalEarnings.add(job.getGrandTotalAmount());
+
+            if (job.getDate().isAfter(startOfWeek.minusDays(1))) {
+                earnedThisWeek = earnedThisWeek.add(job.getGrandTotalAmount());
+            }
+            if (job.getDate().isAfter(startOfMonth.minusDays(1))) {
+                earnedThisMonth = earnedThisMonth.add(job.getGrandTotalAmount());
+            }
+            if (job.getDate().isAfter(startOfYear.minusDays(1))) {
+                earnedThisYear = earnedThisYear.add(job.getGrandTotalAmount());
+            }
+
+            if (job.getGrandTotalAmount().compareTo(highestJobValue) > 0) {
+                highestJobValue = job.getGrandTotalAmount();
+            }
+        }
+
+        BigDecimal averageJobValue = jobs.isEmpty() ? BigDecimal.ZERO : totalEarnings.divide(BigDecimal.valueOf(jobs.size()), 2, BigDecimal.ROUND_HALF_UP);
+
+        return EarningsSummaryDTO.builder()
+                .totalEarnings(totalEarnings)
+                .earnedThisWeek(earnedThisWeek)
+                .earnedThisMonth(earnedThisMonth)
+                .earnedThisYear(earnedThisYear)
+                .averageJobValue(averageJobValue)
+                .highestJobValue(highestJobValue)
+                .build();
     }
 
 
