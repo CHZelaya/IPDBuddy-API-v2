@@ -19,7 +19,7 @@ public class CorsConfig {
         // Allowed origins
         corsConfiguration.setAllowedOriginPatterns(List.of(
                 "http://localhost:3003",
-                "https://*.netlify.app"
+                "https://ipd-buddy.netlify.app"
         ));
 
         //Allowed methods
