@@ -44,6 +44,13 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
+
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            log.info("Skipping TokenAuthenticationFilter for preflight OPTIONS request.");
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String authorizationHeader = request.getHeader(AUTHORIZATION_HEADER);
         log.info("Authorization Header Received: '{}'", authorizationHeader);
         log.info("Incoming Request: [{} {}]", request.getMethod(), request.getRequestURI());
