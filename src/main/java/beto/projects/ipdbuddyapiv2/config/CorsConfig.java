@@ -33,8 +33,12 @@ public class CorsConfig {
 
         //Allowed headers
         corsConfiguration.setAllowedHeaders(List.of(
-        "*"
+                "Authorization",
+                "Content-Type",
+                "X-Requested-With",
+                "Accept"
         ));
+
 
         //Allowed credentials
         corsConfiguration.setAllowCredentials(true);
