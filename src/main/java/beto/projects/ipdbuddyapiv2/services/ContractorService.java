@@ -23,7 +23,6 @@ public class ContractorService {
     }
 
     /* METHODS */
-
     /**
      * Retrieves the contractor information associated with the provided email.
      *
