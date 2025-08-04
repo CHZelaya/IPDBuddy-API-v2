@@ -29,7 +29,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
 
     private static final String BEARER_PREFIX = "Bearer ";
-    private static final String USER_ID_CLAIM = "user_id";
+//    private static final String USER_ID_CLAIM = "user_id";
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private final FirebaseAuth firebaseAuth;
     private final ObjectMapper objectMapper;
