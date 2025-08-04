@@ -61,7 +61,6 @@ public class JobController {
     }
 
 
-    //! Live on API, not implemented on Frontend yet.
     @GetMapping("/job-summaries")
     public ResponseEntity<List<JobSummaryDTO>> getAllContractorJobs(
             Authentication authentication) {
@@ -72,7 +71,7 @@ public class JobController {
 
     }
 
-    //! Implement later, ship first - No Data to pull from anyways...yet
+    //! Implement later, ship first
 //
 //    @GetMapping("/jobs/{id}")
 //    public ResponseEntity<JobResponseDTO> getJobByContractor(

@@ -22,13 +22,8 @@ public class FirebaseConfig {
 
     private static final Logger log = LoggerFactory.getLogger(FirebaseConfig.class);
 
-
-    //@Value("classpath:firebase-service-account.json")
     @Value("${FIREBASE_SERVICE_ACCOUNT_BASE64}")
     private String serviceAccountBase64;
-
-    // ✅ Read from Environment Variable
-    //String serviceAccountJson = System.getenv("FIREBASE_SERVICE_ACCOUNT");
 
     @Bean
     public FirebaseApp firebaseApp() throws IOException {

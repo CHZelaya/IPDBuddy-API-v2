@@ -1,7 +1,4 @@
 package beto.projects.ipdbuddyapiv2.controllers;
-
-
-import beto.projects.ipdbuddyapiv2.config.FirebaseConfig;
 import beto.projects.ipdbuddyapiv2.dto.contractors.ContractorProfileResponseDTO;
 import beto.projects.ipdbuddyapiv2.dto.contractors.ContractorProfileUpdateDTO;
 import beto.projects.ipdbuddyapiv2.services.ContractorService;

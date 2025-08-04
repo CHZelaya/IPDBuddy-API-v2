@@ -15,15 +15,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 public class SecurityConfig {
 
     private static final String[] WHITELISTED_PUBLIC_API_ENDPOINTS = { "/user", "/user/login", "/user/refresh-token" };
-
-//    private static final String[] WHITELISTED_AUTHENTICATED_API_ENDPOINTS = {
-//            "/api/v1/contractor/me",
-//            "/api/v1/job/submit",
-//            "/api/v1/job/jobs",
-//    // Future:
-//    // "/api/v1/job/jobs/*"
-//    };
-
     private final TokenAuthenticationFilter tokenAuthenticationFilter;
 
 // standard constructor

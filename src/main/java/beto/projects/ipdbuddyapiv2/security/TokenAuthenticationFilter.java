@@ -1,6 +1,5 @@
 package beto.projects.ipdbuddyapiv2.security;
 
-import beto.projects.ipdbuddyapiv2.utils.JwtDebugger;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
@@ -45,6 +44,11 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
+        // Skip filter for preflight OPTIONS requests
+        // This is important for CORS preflight requests, which do not require authentication
+        // Originally added while troubleshooting CORS issues
+        // The real issue ended up being incorrect Netlify environment variable configuration.
+        // However, keeping this check as a good practice to avoid unnecessary processing
         if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
             log.info("Skipping TokenAuthenticationFilter for preflight OPTIONS request.");
             filterChain.doFilter(request, response);
@@ -52,15 +56,13 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         }
 
         String authorizationHeader = request.getHeader(AUTHORIZATION_HEADER);
-        log.info("Authorization Header Received: '{}'", authorizationHeader);
+        log.debug("Authorization Header Received (token redacted)");
         log.info("Incoming Request: [{} {}]", request.getMethod(), request.getRequestURI());
 
 
         if (authorizationHeader != null && authorizationHeader.startsWith(BEARER_PREFIX)) {
             String token = authorizationHeader.replace(BEARER_PREFIX, "").trim();
-            JwtDebugger.debugToken(token);
 
-            log.debug("Received Bearer token: {}", token);
 
             Optional<FirebaseToken> firebaseTokenOpt = extractFirebaseTokenFromToken(token);
 
@@ -73,7 +75,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             } else {
-                log.warn("Failed to validate token: {}", token);
+                log.warn("Failed to validate token: token invalid or expired");
                 setAuthErrorDetails(response);
                 return;
             }
@@ -90,13 +92,17 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             log.debug("Extracted user_id claim: {}", firebaseToken.getUid());
             return Optional.of(firebaseToken);
         } catch (FirebaseAuthException exception) {
-            log.error("FirebaseAuthException while verifying token: {}", exception.getMessage());
+            log.error("FirebaseAuthException while verifying token: {}", exception.getAuthErrorCode());
             return Optional.empty();
         }
     }
 
 
-
+/*
+    // This method is commented out because it was not used in the current implementation.
+    // It was originally intended to extract the user_id claim from the Firebase token,
+    // The contractors are being identified by their email address instead.
+ */
 
 //    private Optional<FirebaseToken> extractUserIdFromToken(String token) {
 //        try {
@@ -114,7 +120,13 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 //    }
 
 
-
+    /**
+     * Sets the HTTP response status and content type for authentication errors.
+     * This method is called when the token is missing, invalid, or expired.
+     *
+     * @param response the HttpServletResponse to set the error details on
+     * @throws IOException if an I/O error occurs while writing the response
+     */
     private void setAuthErrorDetails(HttpServletResponse response) throws IOException {
         HttpStatus unauthorized = HttpStatus.UNAUTHORIZED;
         response.setStatus(unauthorized.value());
