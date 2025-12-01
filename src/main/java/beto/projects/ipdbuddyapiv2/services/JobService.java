@@ -72,7 +72,7 @@ public class JobService {
         boolean jobSaved = false;
         boolean billablesSaved = false;
 
-        // Building everything up front - like a chef prepping ingredients before cooking
+        // Building everything up front, like a chef prepping ingredients before cooking
         List<BillableItemSummaryResponseDTO> itemsSummaryList = new ArrayList<>();
         List<BillableItemInputDTO> billableInputs = requestDTO.getBillables();
         List<BillableItem> billableItems = new ArrayList<>();
@@ -89,9 +89,11 @@ public class JobService {
                 BigDecimal total = rate.multiply(quantity);
 
                 //* Helper method(s) to check for special cases and amend total based on special cases
-                if (billablesType.equals(Billables.FIRE_CAULKING)) {
-                    total = capFireCaulkingPay(rate, quantity);
-                }
+                //* Update December 1, 2025 - Client has decided to remove the cap on fire caulking.
+                //* Commenting out for now.
+//                if (billablesType.equals(Billables.FIRE_CAULKING)) {
+//                    total = capFireCaulkingPay(rate, quantity);
+//                }
 
                 BillableItem submission = new BillableItem();
                 submission.setJob(job);
@@ -189,7 +191,7 @@ public class JobService {
             throw new EntityNotFoundException("Contractor not found for email: " + email);
         }
 
-        // Grabbing the Id from the email
+        // Grabbing the ID from the email
         Long contractorId = contractor.getId();
 
         List<Job> jobs = jobRepo.findAllByContractor_Id(contractorId);

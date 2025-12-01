@@ -7,7 +7,7 @@ public enum Billables {
         DRYWALL(new BigDecimal("20.00"), "A sheet of Dry Wall"),
 
         //* Max of $75
-        FIRE_CAULKING(new BigDecimal("5.00"), "Fire Caulking, max payout of $75"),
+        FIRE_CAULKING(new BigDecimal("5.00"), "Fire Caulking"),
 
         //* Scaffolding is paid at $25 per section
         SCAFFOLDING(new BigDecimal("25.00"), "Scaffolding work per section"),
