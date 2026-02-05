@@ -1,13 +1,11 @@
 package beto.projects.ipdbuddyapiv2.dto.jobs;
 
 import beto.projects.ipdbuddyapiv2.entities.BillableItem;
-import lombok.AllArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-@AllArgsConstructor
 public class JobSummaryDTO {
 
     private Long jobId;
@@ -20,6 +18,16 @@ public class JobSummaryDTO {
     private List<BillableItem> billableItems;
 
     public JobSummaryDTO() {
+    }
+
+    public JobSummaryDTO(Long jobId, BigDecimal taxAmount, BigDecimal savingsAmount, BigDecimal grandTotalAmount, LocalDate date, String address, List<BillableItem> billableItems) {
+        this.jobId = jobId;
+        this.taxAmount = taxAmount;
+        this.savingsAmount = savingsAmount;
+        this.grandTotalAmount = grandTotalAmount;
+        this.date = date;
+        this.address = address;
+        this.billableItems = billableItems;
     }
 
     //? Learning about builder patterns here
@@ -40,44 +48,44 @@ public class JobSummaryDTO {
 
         //? "Setters" return the builder itself, "Builder setters" prevent the need for traditional setters
 
-        public Builder jobId(Long jobId){
+        public Builder jobId(Long jobId) {
             this.jobId = jobId;
             return this;
         }
 
-        public Builder taxAmount(BigDecimal taxAmount){
+        public Builder taxAmount(BigDecimal taxAmount) {
             this.taxAmount = taxAmount;
             return this;
         }
 
-        public Builder savingsAmount(BigDecimal savingsAmount){
+        public Builder savingsAmount(BigDecimal savingsAmount) {
             this.savingsAmount = savingsAmount;
             return this;
         }
 
-        public Builder grandTotalAmount(BigDecimal grandTotalAmount){
+        public Builder grandTotalAmount(BigDecimal grandTotalAmount) {
             this.grandTotalAmount = grandTotalAmount;
             return this;
         }
 
 
-        public Builder date(LocalDate date){
+        public Builder date(LocalDate date) {
             this.date = date;
             return this;
         }
 
-        public Builder address(String address){
+        public Builder address(String address) {
             this.address = address;
             return this;
         }
 
-        public Builder billableItems(List billableItems){
+        public Builder billableItems(List billableItems) {
             this.billableItems = billableItems;
             return this;
         }
 
         //? build() method creates the DTO when called
-        public JobSummaryDTO build(){
+        public JobSummaryDTO build() {
             JobSummaryDTO dto = new JobSummaryDTO();
 
             dto.jobId = this.jobId;
@@ -92,7 +100,7 @@ public class JobSummaryDTO {
         }
     }
 
-    public static Builder builder(){
+    public static Builder builder() {
         return new Builder();
     }
 
