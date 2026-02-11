@@ -17,9 +17,11 @@ services:
       db:
         condition: service_healthy
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/ipdbuddy
+      SPRING_PROFILE_ACTIVE: dev
+      SPRING_DATASOURCE_URL: ${SPRING_DATA_SOURCE_URL}
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+
 
 # The commented out section below is an example of how to define a PostgreSQL
 # database that your application can use. `depends_on` tells Docker Compose to
