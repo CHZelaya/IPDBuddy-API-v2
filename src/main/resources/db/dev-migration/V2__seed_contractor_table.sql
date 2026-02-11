@@ -3,7 +3,7 @@ select
     'ipdbuddy@demo.com',
     'demo',
     'user',
-    403-123-4567,
+    4031234567,
     2.0,
     2.0
     WHERE NOT EXISTS(
